@@ -35,44 +35,6 @@ cd ~/.dotfiles
 
 Re-login for `environment.d` to take effect.
 
-## AI coding assistants
-
-**Installed:**
-- Claude Code (with --dangerously-skip-permissions for tmux control)
-- Codex (with --yolo for tmux control)
-
-**Skills** (symlinked to both .claude and .codex):
-- `tmux-orchestration` - coordinate multiple AI instances via tmux
-- `typst` - create professional PDF documents
-- `poc-setup` - FastAPI PoC project template setup
-- `agent-browser` - browser automation
-- `find-skills` - search and discover skills
-- `planning-with-files` - file-based planning workflow
-- `vercel-react-best-practices` - React/Next.js patterns
-
-Skills are managed via `npx skills` and stored in `.agents/skills/`.
-
-## Neovim / LazyVim
-
-**Installed:** Neovim 0.11.5 with LazyVim
-
-**Custom plugins:**
-- Catppuccin (mocha, transparent background)
-- Aerial (code outline sidebar - `<leader>a`)
-
-**Custom commands:**
-- `:Layout` or `<leader>ll` - opens workspace (explorer + terminal + aerial)
-
-**Config location:** `.config/nvim/`
-
-## Shell customizations
-
-**Aliases** (in `.oh-my-zsh/custom/aliases.zsh`):
-- `browseros` - launch BrowserOS with extensions (isdcac, ublock, popup-blocker)
-- `kitty-help` - show kitty keyboard shortcuts cheat sheet
-
-**Terminal:** kitty with starship prompt
-
 ## Qt theming
 
 ### Qt6 — CuteCosmic
@@ -111,6 +73,8 @@ sudo cp src/qt5gtk2-style/libqt5gtk2-style.so /usr/lib64/qt5/plugins/styles/
 - neovim 0.11.5 (with LuaJIT)
 - lazygit 0.47.2
 - tree-sitter 0.25.10
+- claude 2.1.42
+- codex 0.101.0
 
 **Search/Navigation:**
 - fzf 0.67.0
