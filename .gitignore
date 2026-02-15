@@ -1,0 +1,8 @@
+.agents/espo-mcp-server
+.agents/**/node_modules
+.agents/**/__pycache__
+.agents/**/.venv
+.claude
+.codex
+.codex/superpowers
+.agents/browseros/BrowserOS_v0.30.0_x64.AppImage

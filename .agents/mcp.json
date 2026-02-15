@@ -1,0 +1,83 @@
+{
+  "browseros": {
+    "type": "http",
+    "url": "http://127.0.0.1:19999/mcp"
+  },
+  "chrome-devtools": {
+    "args": [
+      "-y",
+      "chrome-devtools-mcp@latest",
+      "--no-usage-statistics",
+      "--executable-path=/usr/bin/chromium"
+    ],
+    "command": "npx"
+  },
+  "context7": {
+    "args": [
+      "-y",
+      "@upstash/context7-mcp"
+    ],
+    "command": "npx",
+    "env": {
+      "DEFAULT_MINIMUM_TOKENS": "10000"
+    }
+  },
+  "espomcp": {
+    "args": [
+      "-c",
+      "cd /home/user/.agents/espo-mcp-server && source .venv/bin/activate && python app.py --stdio"
+    ],
+    "command": "bash",
+    "env": {
+      "ESPOCRM_PASSWORD": "dDGeLPx36i",
+      "ESPOCRM_URL": "https://crm.apertia.cz/",
+      "ESPOCRM_USERNAME": "rudolf_kratochvil",
+      "GITLAB_ENABLED": "true",
+      "GITLAB_TOKEN": "glpat-iv-DHX3_BzvKkaUZg6oXX286MQp1OjJ1CA.01.0y02xikj5",
+      "GITLAB_URL": "https://gitlab.apertia.cz/",
+      "MCP_SERVER_NAME": "espomcp"
+    }
+  },
+  "filesystem": {
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-filesystem"
+    ],
+    "command": "npx"
+  },
+  "mcp-compass": {
+    "args": [
+      "-y",
+      "@liuyoshio/mcp-compass"
+    ],
+    "command": "npx"
+  },
+  "memory": {
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-memory"
+    ],
+    "command": "npx",
+    "env": {
+      "MEMORY_FILE_PATH": "/home/user/.agents/claude/memory.json"
+    }
+  },
+  "playwright": {
+    "args": [
+      "@playwright/mcp@latest",
+      "--vision",
+      "--browser",
+      "firefox"
+    ],
+    "command": "npx",
+    "env": {},
+    "type": "stdio"
+  },
+  "sequential-thinking": {
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-sequential-thinking"
+    ],
+    "command": "npx"
+  }
+}

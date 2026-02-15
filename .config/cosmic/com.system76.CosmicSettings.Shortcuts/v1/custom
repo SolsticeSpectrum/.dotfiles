@@ -1,0 +1,8 @@
+{
+    (
+        modifiers: [
+            Super,
+        ],
+        key: "p",
+    ): System(Screenshot),
+}
