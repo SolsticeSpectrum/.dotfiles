@@ -98,6 +98,15 @@ echo "LINK: .claude/CLAUDE.md -> .dotfiles/agents/AGENTS.md"
 ln -sfn "$DOTFILES/zsh-autosuggestions" "$DOTFILES/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
 echo "LINK: oh-my-zsh/custom/plugins/zsh-autosuggestions -> zsh-autosuggestions"
 
+# BrowserOS download
+BROWSEROS_FILE="$HOME_DIR/.agents/browseros/BrowserOS_v0.30.0_x64.AppImage"
+if [ ! -f "$BROWSEROS_FILE" ]; then
+    echo "DOWNLOAD: $BROWSEROS_FILE"
+    mkdir -p "$HOME_DIR/.agents/browseros"
+    curl -L "https://github.com/browseros-ai/BrowserOS/releases/download/v0.30.0/BrowserOS_v0.30.0_x64.AppImage" -o "$BROWSEROS_FILE"
+    chmod +x "$BROWSEROS_FILE"
+fi
+
 # Verbose boot
 sudo grubby --update-kernel=ALL --remove-args="quiet splash rhgb"
 
