@@ -11,13 +11,8 @@
 vim.api.nvim_create_user_command("Layout", function()
   vim.cmd("ene")
   Snacks.explorer()
-  vim.cmd("wincmd l")
-
-  Snacks.terminal()
-
-  require("aerial").toggle()
-  vim.cmd("wincmd h")
-
+  require("aerial").open({ direction = "right" })
+  Snacks.terminal(nil, { win = { height = 20 } })
   vim.cmd("stopinsert")
 end, {})
 
