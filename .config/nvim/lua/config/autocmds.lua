@@ -17,6 +17,8 @@ vim.api.nvim_create_user_command("Layout", function()
 
   require("aerial").toggle()
   vim.cmd("wincmd h")
+
+  vim.cmd("stopinsert")
 end, {})
 
 vim.keymap.set("n", "<leader>ll", "<cmd>Layout<cr>", { desc = "Setup Layout" })
