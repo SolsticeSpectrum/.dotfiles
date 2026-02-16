@@ -89,10 +89,10 @@ if [ -d "$HOME_DIR/.agents/skills" ]; then
 fi
 
 # AI agent configuration files
-ln -sfn "$DOTFILES/agents/AGENTS.md" "$HOME_DIR/.codex/AGENTS.md"
-ln -sfn "$DOTFILES/agents/AGENTS.md" "$HOME_DIR/.claude/CLAUDE.md"
-echo "LINK: .codex/AGENTS.md -> .dotfiles/agents/AGENTS.md"
-echo "LINK: .claude/CLAUDE.md -> .dotfiles/agents/AGENTS.md"
+ln -sfn "$DOTFILES/.agents/AGENTS.md" "$HOME_DIR/.codex/AGENTS.md"
+ln -sfn "$DOTFILES/.agents/AGENTS.md" "$HOME_DIR/.claude/CLAUDE.md"
+echo "LINK: .codex/AGENTS.md -> .dotfiles/.agents/AGENTS.md"
+echo "LINK: .claude/CLAUDE.md -> .dotfiles/.agents/AGENTS.md"
 
 # zsh-autosuggestions into oh-my-zsh
 ln -sfn "$DOTFILES/zsh-autosuggestions" "$DOTFILES/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
