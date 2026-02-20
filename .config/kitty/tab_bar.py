@@ -45,6 +45,11 @@ UNPLUGGED_ICONS = {
     90:  "\U000f0082 ",
     100: "\U000f17e2 ",
 }
+TEMP_ICONS = {
+    60:  ("\uf2ca ", BLUE),   # cool
+    80:  ("\uf2c9 ", YELLOW), # warm
+    100: ("\uef2a ", RED),    # hot
+}
 CALENDAR_CLOCK_ICON = "\U000f00f0 "
 TERMINAL_ICON       = "\ue795 "
 BASH_ICON           = "\uf489 "
@@ -111,27 +116,24 @@ def _draw_left_status(
 
 
 def _get_active_process_name_cell() -> dict:
-    cell = {"icon": TERMINAL_ICON, "icon_bg": GREEN, "text": ""}
     boss = get_boss()
 
     if not boss:
-        return cell
+        return {"icon": TERMINAL_ICON, "icon_bg": GREEN, "text": ""}
 
     active_window = boss.active_window
     if not active_window or not active_window.child:
-        return cell
+        return {"icon": TERMINAL_ICON, "icon_bg": GREEN, "text": ""}
 
     foreground_processes = active_window.child.foreground_processes
     if not foreground_processes or not foreground_processes[0]["cmdline"]:
-        return cell
+        return {"icon": TERMINAL_ICON, "icon_bg": GREEN, "text": ""}
 
     long_process_name = foreground_processes[0]["cmdline"][0]
-    name = long_process_name.rsplit("/", 1)[-1]
-    cell["text"] = name
-    if name == "bash":
-        cell["icon"] = BASH_ICON
+    proc_name = long_process_name.rsplit("/", 1)[-1]
+    icon = BASH_ICON if proc_name == "bash" else TERMINAL_ICON
 
-    return cell
+    return {"icon": icon, "icon_bg": GREEN, "text": proc_name}
 
 
 def _get_datetime_cell() -> dict:
@@ -140,25 +142,101 @@ def _get_datetime_cell() -> dict:
 
 
 def _get_battery_cell() -> dict:
-    cell = {"icon": "", "icon_bg": YELLOW, "text": ""}
-
     try:
         with open("/sys/class/power_supply/macsmc-battery/status", "r") as f:
             status = f.read().strip()
         with open("/sys/class/power_supply/macsmc-battery/capacity", "r") as f:
-            percent = int(f.read().strip())
+            bat_val = int(f.read().strip())
 
         if status == "Charging":
-            cell["icon"] = CHARGING_ICON
+            icon = CHARGING_ICON
         else:
-            cell["icon"] = UNPLUGGED_ICONS[
-                min(UNPLUGGED_ICONS.keys(), key=lambda x: abs(percent - x))
+            icon = UNPLUGGED_ICONS[
+                min(UNPLUGGED_ICONS.keys(), key=lambda x: abs(bat_val - x))
             ]
-        cell["text"] = f"{percent}%"
-    except FileNotFoundError:
-        pass
 
-    return cell
+        if bat_val >= 50:
+            bg = GREEN
+        elif bat_val >= 20:
+            bg = YELLOW
+        else:
+            bg = RED
+
+        bat_text = f"{bat_val}%"
+        return {"icon": icon, "icon_bg": bg, "text": bat_text}
+    except FileNotFoundError:
+        return {"icon": "", "icon_bg": RED, "text": ""}
+
+
+def _get_cpu_cell() -> dict:
+    import subprocess
+    try:
+        cpu = subprocess.check_output(["ps", "-A", "-o", "%cpu"], text=True).splitlines()
+        cpu_val = sum(float(x) for x in cpu[1:] if x.strip())
+        cpu_text = f"{cpu_val:.0f}%"
+
+        if cpu_val >= 80:
+            bg = RED
+        elif cpu_val >= 50:
+            bg = YELLOW
+        else:
+            bg = GREEN
+    except:
+        cpu_text = "?%"
+        bg = RED
+
+    return {"icon": "\U000f0487 ", "icon_bg": bg, "text": cpu_text}
+
+
+def _get_temp_cell() -> dict:
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            temp = int(f.read().strip())
+        temp_val = temp / 1000
+        temp_text = f"{temp_val:.0f}°C"
+
+        icon, bg = TEMP_ICONS[
+            min(TEMP_ICONS.keys(), key=lambda x: abs(temp_val - x) if temp_val <= x else float('inf'))
+        ]
+    except:
+        temp_text = "?°C"
+        icon, bg = ("\uf2c9 ", RED)
+
+    return {"icon": icon, "icon_bg": bg, "text": temp_text}
+
+
+def _get_ram_cell() -> dict:
+    try:
+        with open("/proc/meminfo", "r") as f:
+            lines = f.readlines()
+
+        mem_total = 0
+        mem_available = 0
+        for line in lines:
+            if line.startswith("MemTotal:"):
+                mem_total = int(line.split()[1])
+            elif line.startswith("MemAvailable:"):
+                mem_available = int(line.split()[1])
+
+        if mem_total > 0:
+            mem_used = mem_total - mem_available
+            ram_val = (mem_used / mem_total) * 100
+            ram_text = f"{ram_val:.0f}%"
+
+            if ram_val >= 80:
+                bg = RED
+            elif ram_val >= 50:
+                bg = YELLOW
+            else:
+                bg = GREEN
+        else:
+            ram_text = "?%"
+            bg = RED
+    except:
+        ram_text = "?%"
+        bg = RED
+
+    return {"icon": "\uf2db ", "icon_bg": bg, "text": ram_text}
 
 
 def _create_cells() -> list[dict]:
@@ -167,6 +245,10 @@ def _create_cells() -> list[dict]:
     battery_cell = _get_battery_cell()
     if battery_cell["text"]:
         cells.append(battery_cell)
+
+    cells.append(_get_cpu_cell())
+    cells.append(_get_ram_cell())
+    cells.append(_get_temp_cell())
 
     process_cell = _get_active_process_name_cell()
     if process_cell["text"]:
