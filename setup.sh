@@ -124,10 +124,15 @@ fi
 # Verbose boot
 sudo grubby --update-kernel=ALL --remove-args="quiet splash rhgb"
 
-# Papirus Catppuccin folders (manual - clone papirus-folders-catppuccin separately)
-# sudo cp -r /path/to/papirus-folders-catppuccin/src/* /usr/share/icons/Papirus/
-# curl -LO https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-folders/master/papirus-folders && chmod +x papirus-folders
-# sudo ./papirus-folders -C cat-mocha-mauve --theme Papirus-Dark
+# Papirus Catppuccin folders
+PAPIRUS_DIR="/tmp/papirus-folders-catppuccin"
+if [ ! -d "$PAPIRUS_DIR" ]; then
+    git clone https://github.com/catppuccin/papirus-folders.git "$PAPIRUS_DIR"
+fi
+sudo cp -r "$PAPIRUS_DIR/src/"* /usr/share/icons/Papirus/
+curl -sLo /tmp/papirus-folders https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-folders/master/papirus-folders
+chmod +x /tmp/papirus-folders
+sudo /tmp/papirus-folders -C cat-mocha-mauve --theme Papirus-Dark
 
 echo ""
 echo "Done. Log out and back in for environment.d changes to take effect."
