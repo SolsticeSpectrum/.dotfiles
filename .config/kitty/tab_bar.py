@@ -169,10 +169,11 @@ def _get_battery_cell() -> dict:
 
 
 def _get_cpu_cell() -> dict:
-    import subprocess
+    import os, subprocess
     try:
+        num_cores = os.cpu_count() or 1
         cpu = subprocess.check_output(["ps", "-A", "-o", "%cpu"], text=True).splitlines()
-        cpu_val = sum(float(x) for x in cpu[1:] if x.strip())
+        cpu_val = sum(float(x) for x in cpu[1:] if x.strip()) / num_cores
         cpu_text = f"{cpu_val:.0f}%"
 
         if cpu_val >= 80:
@@ -189,12 +190,20 @@ def _get_cpu_cell() -> dict:
 
 
 def _get_temp_cell() -> dict:
-    try:
-        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
-            temp = int(f.read().strip())
-        temp_val = temp / 1000
-        temp_text = f"{temp_val:.0f}°C"
+    import glob
+    temps = []
+    for path in glob.glob("/sys/class/hwmon/hwmon*/temp*_input"):
+        try:
+            with open(path) as f:
+                val = int(f.read().strip()) / 1000
+            if 0 < val < 150:
+                temps.append(val)
+        except:
+            pass
 
+    try:
+        temp_val = max(temps)
+        temp_text = f"{temp_val:.0f}°C"
         icon, bg = TEMP_ICONS[
             min(TEMP_ICONS.keys(), key=lambda x: abs(temp_val - x) if temp_val <= x else float('inf'))
         ]
