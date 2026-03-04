@@ -39,8 +39,7 @@ if [ ! -d "$HOME_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
 fi
 
 # Custom zsh aliases
-ln -sfn "$DOTFILES/zsh/aliases.zsh" "$HOME_DIR/.oh-my-zsh/custom/aliases.zsh"
-echo "LINK: ~/.oh-my-zsh/custom/aliases.zsh -> $DOTFILES/zsh/aliases.zsh"
+link .oh-my-zsh/custom/aliases.zsh
 
 # Fonts
 for f in "$DOTFILES"/.local/share/fonts/DejaVuSansM*; do

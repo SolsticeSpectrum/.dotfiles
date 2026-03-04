@@ -1,6 +1,3 @@
-.oh-my-zsh
-zsh-autosuggestions
-papirus-folders-catppuccin
 .agents/espo-mcp-server
 .agents/**/node_modules
 .agents/**/__pycache__
