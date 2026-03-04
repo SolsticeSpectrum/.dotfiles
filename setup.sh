@@ -22,7 +22,25 @@ link() {
 
 # Shell
 link .zshrc
-link .oh-my-zsh
+
+# Oh My Zsh - install as real git repo, not symlink
+if [ -L "$HOME_DIR/.oh-my-zsh" ]; then
+    rm "$HOME_DIR/.oh-my-zsh"
+fi
+if [ ! -d "$HOME_DIR/.oh-my-zsh" ]; then
+    echo "CLONE: oh-my-zsh"
+    git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME_DIR/.oh-my-zsh"
+fi
+
+# zsh-autosuggestions plugin
+if [ ! -d "$HOME_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
+    echo "CLONE: zsh-autosuggestions"
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+fi
+
+# Custom zsh aliases
+ln -sfn "$DOTFILES/zsh/aliases.zsh" "$HOME_DIR/.oh-my-zsh/custom/aliases.zsh"
+echo "LINK: ~/.oh-my-zsh/custom/aliases.zsh -> $DOTFILES/zsh/aliases.zsh"
 
 # Fonts
 for f in "$DOTFILES"/.local/share/fonts/DejaVuSansM*; do
@@ -94,9 +112,6 @@ ln -sfn "$DOTFILES/.agents/AGENTS.md" "$HOME_DIR/.claude/CLAUDE.md"
 echo "LINK: .codex/AGENTS.md -> .dotfiles/.agents/AGENTS.md"
 echo "LINK: .claude/CLAUDE.md -> .dotfiles/.agents/AGENTS.md"
 
-# zsh-autosuggestions into oh-my-zsh
-ln -sfn "$DOTFILES/zsh-autosuggestions" "$DOTFILES/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
-echo "LINK: oh-my-zsh/custom/plugins/zsh-autosuggestions -> zsh-autosuggestions"
 
 # BrowserOS download
 BROWSEROS_FILE="$HOME_DIR/.agents/browseros/BrowserOS_v0.30.0_x64.AppImage"
@@ -110,8 +125,8 @@ fi
 # Verbose boot
 sudo grubby --update-kernel=ALL --remove-args="quiet splash rhgb"
 
-# Papirus Catppuccin folders
-# sudo cp -r $DOTFILES/papirus-folders-catppuccin/src/* /usr/share/icons/Papirus/
+# Papirus Catppuccin folders (manual - clone papirus-folders-catppuccin separately)
+# sudo cp -r /path/to/papirus-folders-catppuccin/src/* /usr/share/icons/Papirus/
 # curl -LO https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-folders/master/papirus-folders && chmod +x papirus-folders
 # sudo ./papirus-folders -C cat-mocha-mauve --theme Papirus-Dark
 
