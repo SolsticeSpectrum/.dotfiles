@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# linux-java — manage Java environments in /usr/lib/jvm
+# modelled after archlinux-java by Guillaume ALAUX <guillaume@archlinux.org>
+
+JVM_DIR=/usr/lib/jvm
+DEFAULT_NAME=default
+DEFAULT_PATH=${JVM_DIR}/${DEFAULT_NAME}
+DEFAULT_NAME_JRE=default-runtime
+DEFAULT_PATH_JRE=${JVM_DIR}/${DEFAULT_NAME_JRE}
+
+
+check_root() {
+  if [ $(id -u) -ne 0 ]; then
+    echo 'This script must be run as root'
+    exit 1
+  fi
+}
+
+check_param_count() {
+  if [ $1 -ne $2 ]; then
+    echo 'Wrong parameter count'
+    exit 2
+  fi
+}
+
+get_default_java() {
+  path=$(readlink -e ${DEFAULT_PATH})
+  if [ "x${path}" != "x/dev/null" ] && [ -n "${path}" ]; then
+    echo ${path/${JVM_DIR}\/}
+  else
+    echo ""
+  fi
+}
+
+get_installed_javas() {
+  javas=()
+  if [ -d ${JVM_DIR} ]; then
+    # -type d skips symlinks (jre, jre-openjdk etc from Fedora alternatives)
+    for dir in $(find ${JVM_DIR} -mindepth 1 -maxdepth 1 -type d | sort); do
+      if [ -x ${dir}/bin/java ]; then
+        javas+=(${dir/${JVM_DIR}\/})
+      elif [ -x ${dir}/jre/bin/java ]; then
+        javas+=(${dir/${JVM_DIR}\/}/jre)
+      fi
+    done
+  fi
+  echo ${javas[@]}
+}
+
+is_java_valid() {
+  test "x$1" != "x${DEFAULT_NAME}" && test -x ${JVM_DIR}/$1/bin/java
+}
+
+set_default_link_to() {
+  new_default=$1
+  unlink ${DEFAULT_PATH} 2>/dev/null
+  ln -sf ${new_default} ${DEFAULT_PATH}
+
+  unlink ${DEFAULT_PATH_JRE} 2>/dev/null
+  if [[ -d ${JVM_DIR}/${new_default}/jre ]]; then
+    ln -sf ${new_default}/jre ${DEFAULT_PATH_JRE}
+  else
+    ln -sf ${new_default} ${DEFAULT_PATH_JRE}
+  fi
+}
+
+unset_default_link() {
+  unlink ${DEFAULT_PATH} 2>/dev/null
+  unlink ${DEFAULT_PATH_JRE} 2>/dev/null
+}
+
+do_status() {
+  installed_java=($(get_installed_javas))
+  if [ ${#installed_java[@]} -eq 0 ]; then
+    echo 'No compatible Java environment installed'
+  else
+    default_java=$(get_default_java)
+    echo 'Available Java environments:'
+    for java in ${installed_java[@]}; do
+      if [ "${java}/jre" = "${default_java}" ]; then
+        echo "  ${java} (${java}/jre default)"
+      elif [ ${java} = "${default_java}" ]; then
+        echo "  ${java} (default)"
+      else
+        echo "  ${java}"
+      fi
+    done
+    if [ -z "${default_java}" ]; then
+      echo 'No Java environment set as default'
+    fi
+  fi
+}
+
+do_get() {
+  get_default_java
+}
+
+do_set() {
+  if ! is_java_valid $1; then
+    echo "'${JVM_DIR}/$1' is not a valid Java environment path"
+    exit 1
+  fi
+  default=$(get_default_java)
+  if [ "x$1" != "x${default}" ] || ! is_java_valid ${default}; then
+    unset_default_link
+    set_default_link_to $1
+  fi
+}
+
+do_unset() {
+  unset_default_link
+}
+
+do_fix() {
+  default=$(get_default_java)
+  if is_java_valid ${default}; then
+    if is_java_valid $(dirname ${default}); then
+      unset_default_link
+      set_default_link_to $(dirname ${default})
+    fi
+  else
+    prev=$(readlink ${DEFAULT_PATH})
+    unset_default_link
+    potential_fixes=("${prev/\/jre}" "${prev}/jre")
+    to_check=(${potential_fixes[@]} $(get_installed_javas))
+    for java in ${to_check[@]}; do
+      if ! is_java_valid $(get_default_java) && is_java_valid ${java}; then
+        set_default_link_to ${java}
+      fi
+    done
+  fi
+  if ! is_java_valid $(get_default_java); then
+    echo 'No valid Java environment found'
+  fi
+}
+
+usage() {
+  echo "$(basename $0) <COMMAND>"
+  echo -e "\nCOMMAND:"
+  echo -e '\tstatus\t\tList installed Java environments and enabled one'
+  echo -e '\tget\t\tReturn the short name of the Java environment set as default'
+  echo -e '\tset <JAVA_ENV>\tForce <JAVA_ENV> as default'
+  echo -e '\tunset\t\tUnset current default Java environment'
+  echo -e '\tfix\t\tFix an invalid/broken default Java environment configuration'
+}
+
+case $1 in
+  'status') do_status;;
+  'get')    do_get;;
+  'set')    check_root; check_param_count $# 2; do_set $2;;
+  'unset')  check_root; do_unset;;
+  'fix')    check_root; do_fix;;
+  'help' | '--help' | '-h' | '') usage;;
+  *) echo "$(basename $0): unknown option '$@'"; exit 1;;
+esac
