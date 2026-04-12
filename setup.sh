@@ -25,6 +25,7 @@ link .zshrc
 
 # Binaries
 link .local/bin/drawterm
+link .local/bin/asahi-java
 
 # Oh My Zsh - install as real git repo, not symlink
 if [ -L "$HOME_DIR/.oh-my-zsh" ]; then

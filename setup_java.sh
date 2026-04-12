@@ -28,7 +28,7 @@ if [ "$1" = "uninstall" ]; then
 fi
 
 echo "Installing asahi-java..."
-sudo cp "$DOTFILES/bin/asahi-java" /usr/local/bin/asahi-java
+sudo cp "$DOTFILES/.local/bin/asahi-java" /usr/local/bin/asahi-java
 sudo chmod +x /usr/local/bin/asahi-java
 
 echo "Installing /etc/profile.d/jvm.sh..."
