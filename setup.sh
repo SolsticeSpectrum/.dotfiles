@@ -23,9 +23,10 @@ link() {
 # Shell
 link .zshrc
 
-# Binaries
-link .local/bin/drawterm
-link .local/bin/asahi-java
+# Binaries — install system-wide so all users and sudo can access them
+sudo cp "$DOTFILES/.local/bin/drawterm" /usr/local/bin/drawterm
+sudo chmod +x /usr/local/bin/drawterm
+echo "INSTALL: /usr/local/bin/drawterm"
 
 # Oh My Zsh - install as real git repo, not symlink
 if [ -L "$HOME_DIR/.oh-my-zsh" ]; then
