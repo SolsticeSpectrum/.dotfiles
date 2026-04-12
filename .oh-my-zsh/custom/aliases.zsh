@@ -1,16 +1,22 @@
 alias ssh='kitty +kitten ssh'
 
 drawterm() {
-    printf "host: "
-    read ip
-    printf "password: "
-    read -rs pass
-    printf "\n"
+    local ip="${1:-}"
+    local pass="${2:-}"
+    if [ -z "$ip" ]; then
+        printf "host: "
+        read ip
+    fi
+    if [ -z "$pass" ]; then
+        printf "password: "
+        read -rs pass
+        printf "\n"
+    fi
     command drawterm -h "$ip" -a "$ip" -u glenda -c 'rio -i /usr/glenda/bin/rc/riostart' &
     sleep 3
-    ydotool type -- "$pass"
+    wtype "$pass"
     sleep 0.5
-    ydotool key 28:1 28:0
+    wtype -k Return
 }
 
 browseros() {
