@@ -23,6 +23,9 @@ link() {
 # Shell
 link .zshrc
 
+# Binaries
+link bin/drawterm
+
 # Oh My Zsh - install as real git repo, not symlink
 if [ -L "$HOME_DIR/.oh-my-zsh" ]; then
     rm "$HOME_DIR/.oh-my-zsh"

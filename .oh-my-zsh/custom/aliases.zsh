@@ -1,5 +1,18 @@
 alias ssh='kitty +kitten ssh'
 
+drawterm() {
+    printf "host: "
+    read ip
+    printf "password: "
+    read -rs pass
+    printf "\n"
+    command drawterm -h "$ip" -a "$ip" -u glenda -c 'rio -i /usr/glenda/bin/rc/riostart' &
+    sleep 3
+    ydotool type -- "$pass"
+    sleep 0.5
+    ydotool key 28:1 28:0
+}
+
 browseros() {
     local ext_dir="$HOME/.agents/browseros/extensions"
     local extensions="$ext_dir/isdcac,$ext_dir/ublock,$ext_dir/popup-blocker"
