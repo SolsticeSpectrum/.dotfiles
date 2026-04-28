@@ -22,6 +22,7 @@ link() {
 
 # Shell
 link .zshrc
+link .zprofile
 
 # Binaries — install system-wide so all users and sudo can access them
 sudo cp "$DOTFILES/.local/bin/drawterm" /usr/local/bin/drawterm
@@ -63,7 +64,6 @@ link .config/cosmic
 
 # Qt theming
 link .config/qt5ct/qt5ct.conf
-link .config/environment.d/cosmic.conf
 link .config/kdeglobals
 
 # GTK2 theming
@@ -140,7 +140,7 @@ chmod +x /tmp/papirus-folders
 sudo /tmp/papirus-folders -C cat-mocha-mauve --theme Papirus-Dark
 
 echo ""
-echo "Done. Log out and back in for environment.d changes to take effect."
+echo "Done. Log out and back in for .zprofile/.zshrc changes to take effect."
 echo ""
 echo "Optional: Run these scripts to install MCP servers:"
 echo "  ./setup_mcp_claude.sh  # Install MCP servers for Claude Code"
