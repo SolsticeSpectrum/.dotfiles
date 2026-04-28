@@ -60,11 +60,7 @@ sudo cmake --install build
 
 [qt5gtk2](https://github.com/trialuser02/qt5gtk2) inherits the GTK2 theme ([Colloid-Red-Dark-Catppuccin](https://github.com/vinceliuice/Colloid-gtk-theme)).
 
-`QT_QPA_PLATFORMTHEME=qt5ct` lives in `.zprofile`. `/usr/bin/start-cosmic` defaults the var to `cosmic` if it sees it empty, but does its `[ -z ]` check *after* `exec -l "$SHELL"` — so a login-shell file like `.zprofile` runs first and wins. `environment.d` doesn't work here: it's loaded by the systemd user manager only after cosmic-comp has already inherited start-cosmic's value, so children launched by cosmic-comp never see it.
-
-Qt5 apps then load qt5ct → qt5gtk2 → GTK2 theme. Qt6 ignores qt5ct (no Qt6 plugin) and CuteCosmic loads independently.
-
-Rebuild qt5gtk2 after Qt5 minor updates — the `.so`s are ABI-tied to the running Qt5.
+`QT_QPA_PLATFORMTHEME=qt5ct` is in `.zprofile` (env.d is too late, comment in the file explains why). Rebuild after Qt5 minor updates.
 
 ```bash
 sudo dnf install qt5ct qt5-qtbase-devel qt5-qtbase-private-devel qt5-qtbase-static gtk2-devel libX11-devel
@@ -82,13 +78,7 @@ sudo cp src/qt5gtk2-style/libqt5gtk2-style.so /usr/lib64/qt5/plugins/styles/
 
 ### WiFi flap on 2.4 GHz with Bluetooth (BCM4387)
 
-BT/WiFi coexistence bug on the combo radio. Anything that wakes BT (kdeconnectd discovery, bluetoothd polling, A2DP) starves 2.4 GHz WiFi airtime. The kernel locally requests a disconnect; reauth then fails with status 16 ("auth timeout") on fabricated BSSID `00:00:00:00:00:00`. About 25% uptime in practice. `rfkill block bluetooth` makes WiFi rock solid (zero events for minutes).
-
-5 GHz is unaffected — radios don't share airtime. **The fix is connecting to a 5 GHz BSS.** Disabling kdeconnectd reduces frequency but doesn't eliminate the issue.
-
-Tracked upstream at [AsahiLinux/linux#486](https://github.com/AsahiLinux/linux/issues/486). Kernel 6.19.13-400 added BT-side coex commands but only for the BT-audio path; the WiFi side is still unprotected. brcmfmac's existing `crit_proto_start` hook only covers DHCP, leaving auth/assoc exposed.
-
-After resume from sleep, WiFi often goes completely dead and needs a full reboot.
+BT/WiFi coex bug on the combo radio — any BT activity drops 2.4 GHz wifi every ~20 s. 5 GHz is fine, use a 5 GHz BSS. Tracked at [AsahiLinux/linux#486](https://github.com/AsahiLinux/linux/issues/486). Post-sleep wifi also dies and needs a full reboot.
 
 ## Tools installed
 
