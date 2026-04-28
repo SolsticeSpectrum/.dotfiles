@@ -60,7 +60,7 @@ sudo cmake --install build
 
 [qt5gtk2](https://github.com/trialuser02/qt5gtk2) inherits the GTK2 theme ([Colloid-Red-Dark-Catppuccin](https://github.com/vinceliuice/Colloid-gtk-theme)).
 
-`QT_QPA_PLATFORMTHEME=qt5ct` is in `.zprofile` (env.d is too late, comment in the file explains why). Rebuild after Qt5 minor updates.
+Set via `QT_QPA_PLATFORMTHEME=qt5ct` in `.zprofile`. Rebuild after Qt5 updates.
 
 ```bash
 sudo dnf install qt5ct qt5-qtbase-devel qt5-qtbase-private-devel qt5-qtbase-static gtk2-devel libX11-devel
