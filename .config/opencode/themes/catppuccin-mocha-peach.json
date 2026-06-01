@@ -67,16 +67,16 @@
       "light": "macSubtext1"
     },
     "background": {
-      "dark": "macBase",
-      "light": "macBase"
+      "dark": "macCrust",
+      "light": "macCrust"
     },
     "backgroundPanel": {
       "dark": "macMantle",
       "light": "macMantle"
     },
     "backgroundElement": {
-      "dark": "macCrust",
-      "light": "macCrust"
+      "dark": "macBase",
+      "light": "macBase"
     },
     "border": {
       "dark": "macSurface0",
