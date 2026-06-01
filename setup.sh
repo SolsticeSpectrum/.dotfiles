@@ -111,10 +111,19 @@ if [ -d "$HOME_DIR/.agents/skills" ]; then
 fi
 
 # AI agent configuration files
-ln -sfn "$DOTFILES/.agents/AGENTS.md" "$HOME_DIR/.codex/AGENTS.md"
-ln -sfn "$DOTFILES/.agents/AGENTS.md" "$HOME_DIR/.claude/CLAUDE.md"
-echo "LINK: .codex/AGENTS.md -> .dotfiles/.agents/AGENTS.md"
-echo "LINK: .claude/CLAUDE.md -> .dotfiles/.agents/AGENTS.md"
+ln -sfn "$DOTFILES/agents/AGENTS.md" "$HOME_DIR/.codex/AGENTS.md"
+ln -sfn "$DOTFILES/agents/AGENTS.md" "$HOME_DIR/.claude/CLAUDE.md"
+mkdir -p "$HOME_DIR/.config/opencode/rules"
+ln -sfn "$DOTFILES/agents/AGENTS.md" "$HOME_DIR/.config/opencode/rules/AGENTS.md"
+echo "LINK: .codex/AGENTS.md -> .dotfiles/agents/AGENTS.md"
+echo "LINK: .claude/CLAUDE.md -> .dotfiles/agents/AGENTS.md"
+echo "LINK: .config/opencode/rules/AGENTS.md -> .dotfiles/agents/AGENTS.md"
+
+# Superpowers for opencode (reuses ~/.codex/superpowers install)
+mkdir -p "$HOME_DIR/.config/opencode/plugins" "$HOME_DIR/.config/opencode/skills"
+ln -sfn "$HOME_DIR/.codex/superpowers/.opencode/plugins/superpowers.js" "$HOME_DIR/.config/opencode/plugins/superpowers.js"
+ln -sfn "$HOME_DIR/.codex/superpowers/skills" "$HOME_DIR/.config/opencode/skills/superpowers"
+echo "LINK: opencode superpowers plugin + skills -> .codex/superpowers"
 
 
 # BrowserOS download
