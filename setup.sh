@@ -56,6 +56,9 @@ done
 link .config/kitty
 link .config/starship.toml
 
+# OpenCode
+link .config/opencode/themes/catppuccin-mocha-peach.json
+
 # Editor
 link .config/nvim
 
